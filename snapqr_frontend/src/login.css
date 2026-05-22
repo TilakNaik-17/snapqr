@@ -1,0 +1,434 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ─── DESIGN TOKENS ──────────────────────────── */
+:root {
+  --li-bg:            #0f1113;
+  --li-panel:         #181b1f;
+  --li-field:         #20242a;
+  --li-border:        #2a2e35;
+  --li-border-focus:  #3b8bff;
+  --li-text:          #dde1e7;
+  --li-muted:         #5a6272;
+  --li-accent:        #3b8bff;
+  --li-accent-glow:   rgba(59,139,255,0.28);
+  --li-accent-hover:  #5fa3ff;
+  --li-white:         #ffffff;
+  --li-radius-card:   22px;
+  --li-radius-field:  11px;
+  --li-transition:    0.22s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── PAGE ───────────────────────────────────── */
+.li-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--li-bg);
+  background-image:
+    radial-gradient(ellipse 55% 40% at 80% 85%, rgba(59,139,255,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 40% at 15% 15%, rgba(59,139,255,0.05) 0%, transparent 70%);
+  padding: 24px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ─── CARD ───────────────────────────────────── */
+.li-card {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  width: min(900px, 100%);
+  min-height: 580px;
+  border-radius: var(--li-radius-card);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 32px 80px rgba(0,0,0,0.75);
+  animation: li-fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes li-fadeUp {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ─── LEFT — FORM PANEL ──────────────────────── */
+.li-form-panel {
+  background: var(--li-panel);
+  padding: 48px 44px 44px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── LOGO ───────────────────────────────────── */
+.li-logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.li-logo-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: none;
+  background: transparent;
+  display: flex;
+  align-items: center;      /* ← vertical center */
+  justify-content: center;  /* ← horizontal center */
+  position: relative;
+  overflow: hidden;
+
+}
+
+.li-logo-ring img {
+  position: absolute;
+  top: 51%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 135%;
+  height: 145%;
+  object-fit: contain;
+  border-radius: 50px;
+}
+
+.li-logo-ring svg {
+  width: 42px;
+  height: 42px;
+  position: relative;
+  z-index: 1;
+}
+
+.li-logo-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 3px;
+  color: var(--li-white);
+  line-height: 1;
+}
+
+.li-logo-tagline {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--li-muted);
+  margin-top: 4px;
+}
+
+/* ─── FIELDS ─────────────────────────────────── */
+.li-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.li-field {
+  position: relative;
+}
+
+.li-field-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--li-muted);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transition: color var(--li-transition);
+}
+
+.li-field:focus-within .li-field-icon {
+  color: var(--li-accent);
+}
+
+.li-field input {
+  width: 100%;
+  background: var(--li-field);
+  border: 1px solid var(--li-border);
+  border-radius: var(--li-radius-field);
+  padding: 16px 18px 16px 48px;
+  color: var(--li-text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.3px;
+  outline: none;
+  transition:
+    border-color var(--li-transition),
+    box-shadow var(--li-transition),
+    background var(--li-transition);
+}
+
+.li-field input::placeholder {
+  color: var(--li-muted);
+  font-size: 10.5px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.li-field input:focus {
+  border-color: var(--li-border-focus);
+  box-shadow: 0 0 0 3px var(--li-accent-glow);
+  background: #22272e;
+}
+
+/* ─── OPTIONS ROW ────────────────────────────── */
+.li-options-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.li-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.li-remember input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--li-accent);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.li-remember span {
+  font-size: 10.5px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--li-muted);
+  user-select: none;
+}
+
+.li-forgot {
+  font-size: 10.5px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--li-accent);
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: color var(--li-transition);
+  padding: 0;
+}
+
+.li-forgot:hover {
+  color: var(--li-accent-hover);
+}
+
+/* ─── PRIMARY BUTTON ─────────────────────────── */
+.li-btn-primary {
+  width: 100%;
+  background: var(--li-accent);
+  color: var(--li-white);
+  border: none;
+  border-radius: var(--li-radius-field);
+  padding: 17px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 19px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition:
+    background var(--li-transition),
+    box-shadow var(--li-transition),
+    transform 0.1s ease;
+  box-shadow: 0 6px 28px var(--li-accent-glow);
+  margin-bottom: 26px;
+}
+
+.li-btn-primary:hover {
+  background: var(--li-accent-hover);
+  box-shadow: 0 10px 36px rgba(59,139,255,0.45);
+}
+
+.li-btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* ─── DIVIDER ────────────────────────────────── */
+.li-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.li-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--li-border);
+}
+
+.li-divider span {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--li-muted);
+}
+
+/* ─── SOCIAL BUTTONS ─────────────────────────── */
+.li-socials {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.li-btn-social {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--li-field);
+  border: 1px solid var(--li-border);
+  border-radius: var(--li-radius-field);
+  padding: 13px 10px;
+  color: var(--li-text);
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition:
+    border-color var(--li-transition),
+    background var(--li-transition),
+    transform 0.1s ease;
+}
+
+.li-btn-social:hover {
+  border-color: var(--li-accent);
+  background: #1e2228;
+}
+
+.li-btn-social:active {
+  transform: scale(0.97);
+}
+
+.li-btn-social svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ─── SWITCH ─────────────────────────────────── */
+.li-switch {
+  margin-top: auto;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--li-muted);
+}
+
+.li-switch button {
+  background: none;
+  border: none;
+  color: var(--li-accent);
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--li-transition);
+}
+
+.li-switch button:hover {
+  color: var(--li-accent-hover);
+}
+
+/* ─── RIGHT — IMAGE PANEL ────────────────────── */
+.li-image-panel {
+  position: relative;
+  overflow: hidden;
+  background: #0c0e10;
+}
+
+.li-image-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  opacity: 0.68;
+  display: block;
+  filter: grayscale(15%) brightness(0.88);
+  transform: scale(1.05);
+  transition: opacity 0.5s ease, transform 7s ease;
+}
+
+.li-image-panel:hover img {
+  opacity: 0.82;
+  transform: scale(1.0);
+}
+
+.li-image-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(59,139,255,0.10) 0%, transparent 55%),
+    linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.li-image-badge {
+  position: absolute;
+  bottom: 28px;
+  left: 24px;
+  right: 24px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+.li-badge-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--li-white);
+  line-height: 1;
+}
+
+.li-badge-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.4px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.li-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3bff8b;
+  box-shadow: 0 0 8px #3bff8b;
+  flex-shrink: 0;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 720px) {
+  .li-card {
+    grid-template-columns: 1fr;
+  }
+  .li-image-panel {
+    display: none;
+  }
+  .li-form-panel {
+    padding: 40px 28px 36px;
+  }
+}

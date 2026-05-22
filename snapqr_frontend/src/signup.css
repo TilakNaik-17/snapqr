@@ -1,0 +1,358 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* ─── DESIGN TOKENS ──────────────────────────── */
+:root {
+  --su-bg:            #0f1113;
+  --su-panel:         #181b1f;
+  --su-field:         #20242a;
+  --su-border:        #2a2e35;
+  --su-border-focus:  #3b8bff;
+  --su-text:          #dde1e7;
+  --su-muted:         #5a6272;
+  --su-accent:        #3b8bff;
+  --su-accent-glow:   rgba(59,139,255,0.28);
+  --su-accent-hover:  #5fa3ff;
+  --su-white:         #ffffff;
+  --su-radius-card:   22px;
+  --su-radius-field:  11px;
+  --su-transition:    0.22s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── PAGE ───────────────────────────────────── */
+.su-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--su-bg);
+  background-image:
+    radial-gradient(ellipse 60% 45% at 15% 85%, rgba(59,139,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 85% 10%, rgba(59,139,255,0.05) 0%, transparent 70%);
+  padding: 24px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ─── CARD ───────────────────────────────────── */
+.su-card {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  width: min(900px, 100%);
+  min-height: 580px;
+  border-radius: var(--su-radius-card);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    0 32px 80px rgba(0,0,0,0.75);
+  animation: su-fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes su-fadeUp {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* ─── LEFT — FORM PANEL ──────────────────────── */
+.su-form-panel {
+  background: var(--su-panel);
+  padding: 52px 44px 44px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADLINE */
+.su-headline {
+  margin-bottom: 30px;
+}
+
+.su-headline h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 1.8px;
+  color: var(--su-white);
+  line-height: 1.1;
+}
+
+.su-headline p {
+  font-size: 12.5px;
+  color: var(--su-muted);
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+  line-height: 1.5;
+}
+
+.su-highlight {
+  color: var(--su-accent);
+  font-weight: 600;
+}
+
+/* FIELDS */
+.su-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.su-field {
+  position: relative;
+}
+
+.su-field-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--su-muted);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transition: color var(--su-transition);
+}
+
+.su-field:focus-within .su-field-icon {
+  color: var(--su-accent);
+}
+
+.su-field input {
+  width: 100%;
+  background: var(--su-field);
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-field);
+  padding: 16px 18px 16px 48px;
+  color: var(--su-text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.3px;
+  outline: none;
+  transition:
+    border-color var(--su-transition),
+    box-shadow var(--su-transition),
+    background var(--su-transition);
+}
+
+.su-field input::placeholder {
+  color: var(--su-muted);
+  font-size: 10.5px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.su-field input:focus {
+  border-color: var(--su-border-focus);
+  box-shadow: 0 0 0 3px var(--su-accent-glow);
+  background: #22272e;
+}
+
+/* PRIMARY BUTTON */
+.su-btn-primary {
+  width: 100%;
+  background: var(--su-accent);
+  color: var(--su-white);
+  border: none;
+  border-radius: var(--su-radius-field);
+  padding: 17px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 19px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  transition:
+    background var(--su-transition),
+    box-shadow var(--su-transition),
+    transform 0.1s ease;
+  box-shadow: 0 6px 28px var(--su-accent-glow);
+  margin-bottom: 26px;
+}
+
+.su-btn-primary:hover {
+  background: var(--su-accent-hover);
+  box-shadow: 0 10px 36px rgba(59,139,255,0.45);
+}
+
+.su-btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* DIVIDER */
+.su-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.su-divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--su-border);
+}
+
+.su-divider span {
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--su-muted);
+  white-space: nowrap;
+}
+
+/* SOCIAL BUTTONS */
+.su-socials {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.su-btn-social {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--su-field);
+  border: 1px solid var(--su-border);
+  border-radius: var(--su-radius-field);
+  padding: 13px 10px;
+  color: var(--su-text);
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition:
+    border-color var(--su-transition),
+    background var(--su-transition),
+    transform 0.1s ease;
+}
+
+.su-btn-social:hover {
+  border-color: var(--su-accent);
+  background: #1e2228;
+}
+
+.su-btn-social:active {
+  transform: scale(0.97);
+}
+
+.su-btn-social svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* SWITCH */
+.su-switch {
+  margin-top: auto;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--su-muted);
+}
+
+.su-switch button {
+  background: none;
+  border: none;
+  color: var(--su-accent);
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--su-transition);
+}
+
+.su-switch button:hover {
+  color: var(--su-accent-hover);
+}
+
+/* ─── RIGHT — IMAGE PANEL ────────────────────── */
+.su-image-panel {
+  position: relative;
+  overflow: hidden;
+  background: #0c0e10;
+}
+
+.su-image-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.70;
+  display: block;
+  filter: grayscale(20%) brightness(0.9);
+  transform: scale(1.05);
+  transition: opacity 0.5s ease, transform 7s ease;
+}
+
+.su-image-panel:hover img {
+  opacity: 0.85;
+  transform: scale(1.0);
+}
+
+.su-image-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(59,139,255,0.12) 0%, transparent 55%),
+    linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.su-image-badge {
+  position: absolute;
+  bottom: 28px;
+  left: 24px;
+  right: 24px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+.su-badge-model {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--su-white);
+  line-height: 1;
+}
+
+.su-badge-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.4px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.su-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3bff8b;
+  box-shadow: 0 0 8px #3bff8b;
+  flex-shrink: 0;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────── */
+@media (max-width: 720px) {
+  .su-card {
+    grid-template-columns: 1fr;
+  }
+  .su-image-panel {
+    display: none;
+  }
+  .su-form-panel {
+    padding: 40px 28px 36px;
+  }
+}
