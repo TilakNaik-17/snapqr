@@ -2,8 +2,16 @@ import "./login.css";
 import logoimg from "./assets/transparent white logo.png";
 import photographer from "./assets/loginpage photog.png";
 import { useState } from "react";
+import SnapQRHomepage from "./home";
 
-/* ─── SVG ICONS ──────────────────────────────── */
+
+const IconUser = () => (
+  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+  </svg>
+);
+
 const IconMail = () => (
   <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
     <rect x="2" y="4" width="20" height="16" rx="2" />
@@ -18,11 +26,14 @@ const IconLock = () => (
   </svg>
 );
 
-export default function Login({ onSwitchToSignup }) {
-
+export default function Login({
+  onSwitchToSignup,
+  onLoginSuccess
+}) {
   // STATE
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+ const [userId, setUserId] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
 
   // LOGIN FUNCTION
   const handleLogin = async () => {
@@ -46,10 +57,12 @@ export default function Login({ onSwitchToSignup }) {
       );
 
       const data = await response.text();
-
+          console.log(data);
       if (response.ok) {
 
         alert("Login Successful");
+
+      onLoginSuccess();
 
         console.log(data);
 
@@ -58,6 +71,14 @@ export default function Login({ onSwitchToSignup }) {
         alert(data);
 
       }
+
+      if (response.ok) {
+  alert("Login Successful");
+
+  if (onLoginSuccess) {
+    onLoginSuccess();
+  }
+}
 
     } catch (error) {
 
@@ -95,6 +116,21 @@ export default function Login({ onSwitchToSignup }) {
 
           {/* Fields */}
           <div className="li-fields">
+            <div className="li-field">
+              <span className="li-field-icon">
+                <IconUser />
+              </span>
+
+              <input
+                type="text"
+                placeholder="userid"
+                autoComplete="id"
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
+              />
+            </div>
+
 
             {/* EMAIL */}
             <div className="li-field">

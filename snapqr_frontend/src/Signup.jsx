@@ -24,7 +24,7 @@ const IconLock = () => (
 );
 
 const GoogleIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none">
+  <svg viewBox="0 0 24 24" fill="none" width="16" height="16">
     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
     <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" />
@@ -33,7 +33,7 @@ const GoogleIcon = () => (
 );
 
 const MicrosoftIcon = () => (
-  <svg viewBox="0 0 24 24">
+  <svg viewBox="0 0 24 24" width="16" height="16">
     <rect x="1" y="1" width="10" height="10" fill="#F25022" />
     <rect x="13" y="1" width="10" height="10" fill="#7FBA00" />
     <rect x="1" y="13" width="10" height="10" fill="#00A4EF" />
@@ -45,10 +45,13 @@ export default function Signup({ onSwitchToLogin }) {
 
   // STATE
   const [formData, setFormData] = useState({
+    user_id: "", // Matches the name attribute and backend entity field precisely
     fullName: "",
     email: "",
     password: "",
   });
+  
+  const [errors, setErrors] = useState({});
 
   // HANDLE INPUT
   const handleChange = (e) => {
@@ -56,37 +59,76 @@ export default function Signup({ onSwitchToLogin }) {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear field-specific error as user types
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: "",
+      });
+    }
   };
 
-  // HANDLE SIGNUP
+  // VALIDATE INPUTS FOR BLANK SPACES AND PASSWORD STRENGTH
+  const validateForm = () => {
+    let formErrors = {};
+    const emailRegex = /\S+@\S+\.\S+/;
+
+    if (!formData.user_id || !formData.user_id.trim()) {
+      formErrors.user_id = "User ID cannot be empty";
+    }
+    if (!formData.fullName || !formData.fullName.trim()) {
+      formErrors.fullName = "Name cannot be empty";
+    }
+    if (!formData.email || !formData.email.trim()) {
+      formErrors.email = "Email cannot be empty";
+    } else if (!emailRegex.test(formData.email)) {
+      formErrors.email = "Please enter a valid email address";
+    }
+    if (!formData.password || !formData.password.trim()) {
+      formErrors.password = "Password cannot be empty";
+    } else if (formData.password.length < 6) {
+      formErrors.password = "Password must be at least 6 characters long";
+    }
+
+    return formErrors;
+  };
+
+  // FIXED: UPDATED HANDLE SIGNUP WITH PLAIN TEXT ERROR EXRACTION
   const handleSignup = async () => {
+    const formErrors = validateForm();
+    
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      alert("Please fix validation errors before submitting.");
+      return;
+    }
 
     try {
+      const response = await fetch(
+        "http://localhost:8084/api/users/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
-const response = await fetch(
-  "http://localhost:8084/api/users/signup",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  }
-);
-
-      const data = await response.json();
-
-      console.log(data);
-      
-
-      alert("Signup Successful!");
-
+      // If response is successful (status 200)
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        alert("Signup Successful!");
+        setErrors({});
+      } else {
+        // FIXED: Extract string tokens safely instead of breaking on JSON parsing
+        const textError = await response.text();
+        alert("Signup Failed: " + textError);
+      }
     } catch (error) {
-
-      console.error(error);
-
-      alert("Signup Failed!");
-
+      console.error("Frontend Catch Block:", error);
+      alert("Network Error or Parsing Error: Signup Failed!");
     }
   };
 
@@ -100,7 +142,6 @@ const response = await fetch(
           {/* HEADLINE */}
           <div className="su-headline">
             <h2>Ready to shoot?</h2>
-
             <p>
               Sign-up now to{" "}
               <span className="su-highlight">
@@ -113,49 +154,68 @@ const response = await fetch(
           {/* INPUT FIELDS */}
           <div className="su-fields">
 
-            {/* FULL NAME */}
-            <div className="su-field">
+            {/* USER ID (FIXED INPUT ATTRIBUTE NAME CLASH) */}
+            <div className={`su-field ${errors.user_id ? "db-input-error" : ""}`}>
               <span className="su-field-icon">
                 <IconUser />
               </span>
+              <input
+                type="text"
+                name="user_id" // Fixed from "user id" to match state management keys
+                placeholder="User ID"
+                autoComplete="username"
+                value={formData.user_id}
+                onChange={handleChange}
+              />
+              {errors.user_id && <span className="db-error-msg" style={{display: 'block', color: 'red', fontSize: '12px', marginTop: '4px'}}>{errors.user_id}</span>}
+            </div>
 
+            {/* FULL NAME */}
+            <div className={`su-field ${errors.fullName ? "db-input-error" : ""}`}>
+              <span className="su-field-icon">
+                <IconUser />
+              </span>
               <input
                 type="text"
                 name="fullName"
                 placeholder="Full Name"
                 autoComplete="name"
+                value={formData.fullName}
                 onChange={handleChange}
               />
+              {errors.fullName && <span className="db-error-msg" style={{display: 'block', color: 'red', fontSize: '12px', marginTop: '4px'}}>{errors.fullName}</span>}
             </div>
 
             {/* EMAIL */}
-            <div className="su-field">
+            <div className={`su-field ${errors.email ? "db-input-error" : ""}`}>
               <span className="su-field-icon">
                 <IconMail />
               </span>
-
               <input
                 type="email"
                 name="email"
                 placeholder="Email"
                 autoComplete="email"
+                value={formData.email}
                 onChange={handleChange}
               />
+              {errors.email && <span className="db-error-msg" style={{display: 'block', color: 'red', fontSize: '12px', marginTop: '4px'}}>{errors.email}</span>}
             </div>
 
             {/* PASSWORD */}
-            <div className="su-field">
+            <div className={`su-field ${errors.password ? "db-input-error" : ""}`}>
               <span className="su-field-icon">
                 <IconLock />
               </span>
-
               <input
                 type="password"
                 name="password"
                 placeholder="Password"
                 autoComplete="new-password"
+                value={formData.password}
                 onChange={handleChange}
               />
+              {errors.password && <span className="db-error-msg" style={{display: 'block', color: 'red', fontSize: '12px', marginTop: '4px'}}>{errors.password}</span>}
             </div>
 
           </div>
@@ -177,23 +237,19 @@ const response = await fetch(
 
           {/* SOCIALS */}
           <div className="su-socials">
-
             <button className="su-btn-social">
               <GoogleIcon />
               Google
             </button>
-
             <button className="su-btn-social">
               <MicrosoftIcon />
               Microsoft
             </button>
-
           </div>
 
           {/* LOGIN SWITCH */}
           <div className="su-switch">
             Already have an account?{" "}
-
             <button onClick={onSwitchToLogin}>
               Log in
             </button>
@@ -203,25 +259,19 @@ const response = await fetch(
 
         {/* RIGHT IMAGE PANEL */}
         <div className="su-image-panel">
-
           <img
             src={confirmImg}
             alt="Photography studio"
           />
-
           <div className="su-image-overlay" />
-
           <div className="su-image-badge">
-
             <div className="su-badge-model">
               Canon EOS R5
             </div>
-
             <div className="su-badge-sub">
               <span className="su-badge-dot" />
               Available for rent today
             </div>
-
           </div>
         </div>
 
