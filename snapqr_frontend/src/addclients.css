@@ -1,442 +1,529 @@
-/* ── Design tokens ── */
-:root {
-  --bg: #1a1a1e;
-  --bg-panel: #22232a;
-  --bg-sidebar: #1e1f26;
-  --bg-input: #2c2d36;
-  --border: #35363f;
-  --blue: #2d9cff;
-  --blue-hover: #4dabff;
-  --blue-dark: #1a6fc4;
-  --text-primary: #eaeaf0;
-  --text-muted: #8a8b9a;
-  --green: #3ecf6e;
-  --yellow: #f5c542;
-  --red: #ff6b6b;
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 40px;
-  --font-body: "DM Sans", "Segoe UI", sans-serif;
-  --font-mono: "DM Mono", "Fira Mono", monospace;
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
-  --transition: 0.18s ease;
-}
-
-/* ── Reset ── */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  background: var(--bg);
-  font-family: var(--font-body);
-  color: var(--text-primary);
-  -webkit-font-smoothing: antialiased;
-    margin: 0;
-    overflow: auto;
-}
-
-
-.addclients-page {
-    height: 100vh;
-    overflow: hidden;
-}
-/* ── Root shell ── */
+/* ==========================================================================
+   Global Root Layout & Theme (Dark Mode Colors #1a1a1a & #2a2a2a)
+   ========================================================================== */
 .db-root {
+  display: flex;
+  flex-direction: row; 
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  
+}
+
+/* ==========================================================================
+   Shared Sidebar Component
+   ========================================================================== */
+.sidebar {
+  width: 280px;
+  min-width: 280px; 
+  height: 100vh;
+  background-color: #2a2a2a;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  padding: 28px 16px 20px;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid #333333;
+  flex-shrink: 0; 
+  box-sizing: border-box;
 }
 
-/* ── Top Navigation ── */
+/* Logo */
+.logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.logo-camera-icon img {
+        width: 200px;
+        height: 100px;
+        object-fit: contain;
+    }
+
+.logo-img-placeholder {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text {
+  text-align: center;
+}
+
+.logo-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #e0e0e0;
+  letter-spacing: 1px;
+}
+
+.logo-sub {
+  font-size: 10px;
+  color: #888888;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Nav items */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 18px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: #aaaaaa;
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  text-align: left;
+  margin-bottom: 4px;
+  box-sizing: border-box;
+}
+
+.nav-item:hover {
+  background-color: #333333;
+  color: #e0e0e0;
+}
+
+.nav-item.active {
+  background-color: #00c8e0;
+  color: #0a0a0a;
+  font-weight: 700;
+}
+
+.nav-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Footer */
+.sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #333333;
+  align-items: center;
+}
+
+.social-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+  color: #aaaaaa;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.social-btn:hover {
+  background-color: #00c8e0;
+  color: #0a0a0a;
+  border-color: #00c8e0;
+}
+
+/* Logout button in sidebar footer */
+.btn-logout-sidebar {
+  margin-left: auto;
+  background: none;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  color: #00c8e0;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.btn-logout-sidebar:hover {
+  background-color: #00c8e0;
+  color: #0a0a0a;
+  border-color: #00c8e0;
+}
+
+/* ==========================================================================
+   Navigation Bar (Top Tabs Area)
+   ========================================================================== */
 .db-nav {
-    display: flex;
-    gap: 14px;
-    padding: 50px 24px 10px;
-    background: var(--bg);
+  display: flex;
+  gap: 15px;
+  padding: 30px 40px 20px 40px;
+  background-color: #1a1a1a;
 }
 
 .db-nav-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 22px;
-  border-radius: var(--radius-lg);
-  border: none;
-  background: var(--blue);
-  color: #0a0f1a;
-  font-family: var(--font-body);
-  font-weight: 700;
+  background-color: #2a2a2a;
+  color: #94a3b8;
+  border: 2px solid transparent;
+  padding: 10px 24px;
+  border-radius: 30px;
   font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background var(--transition), transform var(--transition),
-    box-shadow var(--transition);
-  box-shadow: 0 2px 12px rgba(45, 156, 255, 0.25);
-  letter-spacing: 0.01em;
+  transition: all 0.25s ease;
 }
 
 .db-nav-btn:hover {
-  background: var(--blue-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(45, 156, 255, 0.4);
+  background-color: #333333;
+  color: #ffffff;
 }
 
 .db-nav-btn.active {
-  background: var(--blue);
-  outline: 2px solid rgba(45, 156, 255, 0.6);
-  outline-offset: 2px;
+  background-color: #0ea5e9;
+  color: #ffffff;
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.4);
 }
 
 .db-nav-icon {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
 }
 
-/* ── Body layout ── */
+/* ==========================================================================
+   Dashboard Main Layout Split & Workspace Wrapper
+   ========================================================================== */
 .db-body {
-    display: flex;
-    flex: 0;
-    gap: 0;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-md);
-    overflow: auto;
-    background: var(--bg-panel);
-    box-shadow: var(--shadow);
-    width: 125%;
-  
+  display: flex;
+  flex-direction: column; 
+  flex: 1;
+  min-width: 0; 
+  box-sizing: border-box;
+  background-color: #1a1a1a;
 }
 
-/* ── Sidebar ── */
+/* Internal Row Container wrapping Overview panel and main forms */
+.db-content-split {
+  display: flex;
+  flex-direction: row;
+  padding: 0 40px 40px 40px;
+  gap: 30px;
+  align-items: flex-start;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Sidebar Stats Card */
 .db-sidebar {
-  width: 280px;
-  min-width: 180px;
-  background: var(--bg-sidebar);
-  padding: 28px 20px;
-  border-right: 1.5px solid var(--border);
+  width: 260px;
+  min-width: 260px;
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  border-radius: 16px;
+  padding: 24px;
+  height: fit-content;
+  box-sizing: border-box;
   flex-shrink: 0;
 }
 
 .db-sidebar-title {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--blue);
+  font-size: 1.1rem;
+  color: #38bdf8;
+  margin-top: 0;
   margin-bottom: 24px;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .db-stats {
   list-style: none;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .db-stats li {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 6px;
 }
 
 .db-stat-label {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  font-weight: 500;
+  font-size: 0.85rem;
+  color: #94a3b8;
 }
 
 .db-stat-value {
-  font-size: 1.3rem;
-  font-family: var(--font-mono);
+  font-size: 1.8rem;
   font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: 0.04em;
+  color: #ffffff;
+  font-family: monospace;
 }
 
-/* ── Main area ── */
+/* Main Display Panels Container */
 .db-main {
   flex: 1;
-  padding: 32px 36px;
-  display: flex;
-  flex-direction: column;
+  min-width: 0;
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  border-radius: 16px;
+  padding: 30px;
+  min-height: 450px;
+  box-sizing: border-box;
 }
 
-/* ── Add client form ── */
+/* ==========================================================================
+   View 1: Form Component Styles ("Add clients")
+   ========================================================================== */
 .db-form-panel {
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.inputs {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-width: 520px;
-  width: 100%;
-  animation: fadeIn 0.22s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.db-flash {
-  background: rgba(62, 207, 110, 0.14);
-  border: 1px solid var(--green);
-  color: var(--green);
-  border-radius: var(--radius-sm);
-  padding: 9px 16px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  animation: fadeIn 0.2s ease;
+  gap: 18px;
 }
 
 .db-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  width: 100%;
 }
 
 .db-label {
   font-size: 0.85rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  padding-left: 4px;
-  letter-spacing: 0.02em;
+  color: #94a3b8;
+  margin-bottom: 6px;
+  text-align: center;
+  font-weight: 500;
 }
 
 .db-input {
-  background: var(--bg-input);
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-lg);
-  padding: 12px 20px;
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.92rem;
-  outline: none;
-  transition: border-color var(--transition), background var(--transition),
-    box-shadow var(--transition);
   width: 100%;
-}
-
-.db-input::placeholder {
-  color: var(--text-muted);
-  opacity: 0.7;
+  max-width: 400px;
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .db-input:focus {
-  border-color: var(--blue);
-  background: #2f3040;
-  box-shadow: 0 0 0 3px rgba(45, 156, 255, 0.12);
-}
-
-.db-input-error {
-  border-color: var(--red) !important;
+  border-color: #38bdf8;
+  background-color: #222222;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
 }
 
 .db-input-date {
+  text-align: center;
   color-scheme: dark;
 }
 
+.db-input-error {
+  border-color: #ef4444 !important;
+}
+
 .db-error-msg {
-  font-size: 0.77rem;
-  color: var(--red);
-  padding-left: 6px;
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 4px;
 }
 
 .db-form-actions {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 4px;
+  justify-content: center;
+  margin-top: 10px;
 }
 
 .db-add-btn {
-  padding: 11px 36px;
-  border-radius: var(--radius-lg);
-  background: var(--blue);
-  color: #071422;
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: 0.97rem;
-  border: none;
+  background-color: #1a1a1a;
+  border: 1px solid #38bdf8;
+  color: #38bdf8;
+  padding: 10px 36px;
+  border-radius: 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: background var(--transition), transform var(--transition),
-    box-shadow var(--transition);
-  box-shadow: 0 2px 14px rgba(45, 156, 255, 0.3);
+  transition: all 0.2s ease;
 }
 
 .db-add-btn:hover {
-  background: var(--blue-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 22px rgba(45, 156, 255, 0.45);
+  background-color: #38bdf8;
+  color: #1a1a1a;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
 }
 
-.db-add-btn:active {
-  transform: translateY(0);
+.db-flash {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #10b981;
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  animation: fadeInOut 1.8s ease forwards;
 }
 
-/* ── Status / table panel ── */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -10px); }
+  15% { opacity: 1; transform: translate(-50%, 0); }
+  85% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+/* ==========================================================================
+   View 2: Data Presentation Table Components ("Project Status")
+   ========================================================================== */
 .db-status-panel {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  animation: fadeIn 0.22s ease;
+  gap: 15px;
 }
 
 .db-status-title {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--blue);
-  letter-spacing: -0.01em;
+  font-size: 1.2rem;
+  color: #38bdf8;
+  margin: 0;
+  font-weight: 600;
 }
 
 .db-table-wrap {
-  overflow-x: auto;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--border);
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 12px;
+  padding: 4px;
 }
 
 .db-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  text-align: left;
 }
 
 .db-table th {
-  background: #1e1f28;
-  color: var(--text-primary);
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 13px 16px;
-  text-align: left;
-  border-bottom: 1.5px solid var(--border);
-  letter-spacing: 0.02em;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 16px 20px;
+  border-bottom: 1px solid #333333;
+  white-space: nowrap;
 }
 
 .db-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-primary);
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  border-bottom: 1px solid #222222;
   vertical-align: middle;
-  font-family: var(--font-mono);
-  font-size: 0.83rem;
+  white-space: nowrap;
 }
 
 .db-table tbody tr:last-child td {
   border-bottom: none;
 }
 
-.db-table tbody tr:hover td {
-  background: rgba(45, 156, 255, 0.04);
-}
-
 .db-empty {
   text-align: center;
-  color: var(--text-muted);
+  color: #64748b;
+  padding: 40px !important;
   font-style: italic;
-  font-family: var(--font-body);
-  padding: 36px !important;
 }
 
-/* ── Status tags ── */
+/* ==========================================================================
+   Dynamic Status Badges Configuration
+   ========================================================================== */
 .db-status-cell {
   display: flex;
-  flex-wrap: wrap;
   gap: 6px;
-  align-items: center;
 }
 
 .db-status-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
+  text-transform: lowercase;
   border: none;
   cursor: pointer;
-  font-family: var(--font-mono);
-  letter-spacing: 0.03em;
-  transition: opacity var(--transition), transform var(--transition);
+  transition: transform 0.15s ease, opacity 0.2s ease;
 }
 
 .db-status-tag:hover {
-  opacity: 0.82;
-  transform: scale(1.04);
+  transform: scale(1.05);
+  opacity: 0.9;
 }
 
 .db-status-pending {
-  background: rgba(245, 197, 66, 0.15);
-  color: var(--yellow);
-  border: 1px solid rgba(245, 197, 66, 0.35);
-}
-
-.db-status-editing {
-  background: rgba(45, 156, 255, 0.14);
-  color: var(--blue);
-  border: 1px solid rgba(45, 156, 255, 0.3);
+  background-color: #3a2e1e;
+  color: #f59e0b;
 }
 
 .db-status-delivered {
-  background: rgba(62, 207, 110, 0.13);
-  color: var(--green);
-  border: 1px solid rgba(62, 207, 110, 0.3);
+  background-color: #1c352d;
+  color: #10b981;
+  font-family: monospace;
 }
 
-.db-add-row-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--bg-input);
-  border: 1.5px solid var(--border);
-  color: var(--text-muted);
-  font-size: 1rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: border-color var(--transition), color var(--transition);
-  display: flex;
+.db-status-editing {
+  background-color: #1e293b;
+  color: #38bdf8;
+}
+
+.db-delete-btn {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
 }
 
-.db-add-row-btn:hover {
-  border-color: var(--blue);
-  color: var(--blue);
+.db-delete-btn:hover {
+  background-color: rgba(239, 68, 68, 0.15) !important;
 }
 
-/* ── Responsive ── */
-@media (max-width: 640px) {
-  .db-body {
-    flex-direction: column;
-    margin: 0 6px 14px;
+.page-view {
+  width: 100%;
+  animation: pageEnter 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px); /* Smoothly lifts the incoming page up */
   }
-
-  .db-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1.5px solid var(--border);
-    padding: 20px 18px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-
-  .db-stats {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-
-  .db-main {
-    padding: 20px 18px;
-  }
-}
-
-.form-container {
-    height: 100vh;
-    overflow-y: auto;
-}
-.form-group {
-    margin-bottom: 12px;
-}
-
-input {
-    padding: 12px;
 }
