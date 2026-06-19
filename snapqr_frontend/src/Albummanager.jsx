@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaInstagram } from "react-icons/fa";
 import logoimg from "./assets/transparent white logo.png";
 import "./AlbumManager.css";
@@ -10,14 +10,44 @@ const navItems = [
   { icon: "⬇", label: "Cloud storage" },
 ];
 
-export default function AlbumManager({ onNavigate }) {
+export default function AlbumManager({ onNavigate, onOpenGallery }) {
   const [activeNav, setActiveNav] = useState("QR Sharing");
   const [albums, setAlbums] = useState([]);
   const [albumId, setAlbumId] = useState("");
   const [albumName, setAlbumName] = useState("");
+  
+  // FIXED: Declared the missing user ID state here
+  const [userId, setUserId] = useState(""); 
   const [createdDate, setCreatedDate] = useState("");
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [showQr, setShowQr] = useState(false);
+
+  // Load albums and set initial userId on mount
+  useEffect(() => {
+    getAlbums();
+    const sessionUser = localStorage.getItem("user_id");
+    if (sessionUser) setUserId(sessionUser);
+  }, []);
+
+  async function getAlbums() {
+    try {
+      const activeUserId = localStorage.getItem("user_id") || "11";
+      const response = await fetch(
+        `http://localhost:8084/api/albums/user/${activeUserId}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch albums");
+
+      const data = await response.json();
+      setAlbums(data.map((a) => ({
+        id: a.albumId,
+        name: a.albumName,
+        userId: a.userId,
+        date: a.createdDate,
+      })));
+    } catch (error) {
+      console.error("Error loading albums:", error);
+    }
+  }
 
   const handleNavClick = (label) => {
     if (label === "QR Sharing") return;
@@ -25,25 +55,51 @@ export default function AlbumManager({ onNavigate }) {
     if (onNavigate) onNavigate(label);
   };
 
-  const handleAdd = () => {
-    if (!albumName.trim() || !createdDate.trim()) return;
-    setAlbums((prev) => [
-      ...prev,
-      {
-        id: albumId.trim() || Date.now(),
-        name: albumName.trim(),
-        date: createdDate,
-      },
-    ]);
-    setAlbumId("");
-    setAlbumName("");
-    setCreatedDate("");
+  const handleAdd = async () => {
+    if (!albumName.trim() || !createdDate.trim() || !userId.trim()) {
+      alert("Fill all fields");
+      return;
+    }
+
+    const albumData = {
+      albumName: albumName.trim(),
+      createdDate: createdDate.trim(),
+      userId: Number(userId),
+    };
+
+    try {
+      const response = await fetch("http://localhost:8084/api/albums/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(albumData),
+      });
+
+      const result = await response.text();
+
+      if (!response.ok) {
+        console.log("Backend error:", result);
+        alert("Album not saved: " + result);
+        return;
+      }
+
+      await getAlbums();
+
+      setAlbumId("");
+      setAlbumName("");
+      setUserId("");
+      setCreatedDate("");
+
+      alert("Album stored in database");
+    } catch (error) {
+      console.error(error);
+      alert("Backend connection failed");
+    }
   };
 
   const handleGenerateQr = async (album) => {
-    const qrLink = `http://localhost:5173/qrcode/${album.name
-      .replace(/\s+/g, "-")
-      .toLowerCase()}/${album.id}`;
+    const qrLink = `http://10.104.213.18:5173/qrcode/${album.id}`;
 
     try {
       const response = await fetch("http://localhost:8084/api/qrcode/generate", {
@@ -63,13 +119,10 @@ export default function AlbumManager({ onNavigate }) {
     setShowQr(true);
   };
 
-  const qrLink = selectedAlbum
-    ? `http://snapqr/qrcode/${selectedAlbum.name
-        .replace(/\s+/g, "-")
-        .toLowerCase()}/${selectedAlbum.id}`
-    : "";
-
-  const qrImageUrl = selectedAlbum
+const qrLink = selectedAlbum
+  ? `http://10.104.213.18:5173/qrcode/${selectedAlbum.id}`
+  : "";
+const qrImageUrl = selectedAlbum
     ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrLink)}`
     : "";
 
@@ -116,10 +169,9 @@ export default function AlbumManager({ onNavigate }) {
 
         {/* Header */}
         <header className="app-header">
-
           <div className="header-fields">
             <div className="header-field">
-              <label className="form-label">Album id:</label>
+              <label className="form-label">AlbumID:</label>
               <input
                 className="form-input"
                 type="text"
@@ -129,10 +181,25 @@ export default function AlbumManager({ onNavigate }) {
               />
             </div>
           </div>
+
+          
         </header>
+
+  
 
         {/* Form rows */}
         <section className="form-section">
+  <div className="form-row">
+            <label className="form-label">User ID:</label>
+            <input
+              className="form-input"
+              type="text"
+              placeholder="Enter user id"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+            />
+          </div>
+
           <div className="form-row">
             <label className="form-label">Album name:</label>
             <input
@@ -143,6 +210,8 @@ export default function AlbumManager({ onNavigate }) {
               onChange={(e) => setAlbumName(e.target.value)}
             />
           </div>
+
+
 
           <div className="form-row">
             <label className="form-label">Created date:</label>
@@ -176,7 +245,16 @@ export default function AlbumManager({ onNavigate }) {
                   </div>
                   <div className="album-info">
                     <p className="album-name">album name: {album.name}</p>
+                    {/* Optional UI display line for user ID inside your card list */}
+                    <p className="album-user">user identity: {album.userId}</p>
                     <p className="album-date">album created date: {album.date}</p>
+                    <button
+                      className="btn-generate-qr"
+                      style={{ marginRight: "10px", color: "#00c8e0" }}
+                      onClick={() => onOpenGallery && onOpenGallery(album)}
+                    >
+                      view gallery
+                    </button>
                     <button
                       className="btn-generate-qr"
                       onClick={() => handleGenerateQr(album)}

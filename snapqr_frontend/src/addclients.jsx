@@ -42,11 +42,11 @@ export default function MngClients({ activeNav, onNavClick, onLogout }) {
   // Fetch clients
   useEffect(() => {
     if (loggedInUser) {
-      getClients();
+      fetchClients();
     }
   }, [loggedInUser]);
 
-  async function getClients() {
+  async function fetchClients() {
     try {
       const userId = loggedInUser || "11";
       const response = await fetch(`http://localhost:8084/api/clients/user/${userId}`);
@@ -120,11 +120,8 @@ export default function MngClients({ activeNav, onNavClick, onLogout }) {
       const payload = {
         name: form.name,
         email: form.email,
-        phone_number: form.phoneNo,
         phoneNo: form.phoneNo,
-        event_type: form.eventType,
         eventType: form.eventType,
-        event_date: form.eventDate,
         eventDate: form.eventDate,
         pending: 1,
         editing: 0,
@@ -140,7 +137,7 @@ export default function MngClients({ activeNav, onNavClick, onLogout }) {
 
       if (!response.ok) throw new Error("Client not saved");
 
-      await getClients();
+      await fetchClients();
 
       setForm({ 
         userid: targetUserId, 
@@ -160,14 +157,28 @@ export default function MngClients({ activeNav, onNavClick, onLogout }) {
     }
   }
 
-  async function cycleStatus(clientId, currentStatus) {
-    let endpoint = currentStatus === "pending" ? "deliver" : "pending";
+  async function markAsDelivered(clientId, currentStatus) {
+    if (currentStatus !== "pending") return;
+
     try {
-      const response = await fetch(`http://localhost:8084/api/clients/${endpoint}/${clientId}`, { method: "PUT" });
-      if (!response.ok) throw new Error("Failed to change status");
-      getClients();
+      const response = await fetch(
+        `http://localhost:8084/api/clients/deliver/${clientId}`,
+        {
+          method: "PUT",
+        }
+      );
+
+      const result = await response.text();
+
+      if (!response.ok) {
+        alert("Update failed: " + result);
+        return;
+      }
+
+      await fetchClients(); // refresh UI
     } catch (error) {
       console.error(error);
+      alert("Backend connection failed");
     }
   }
 
@@ -176,7 +187,7 @@ export default function MngClients({ activeNav, onNavClick, onLogout }) {
     try {
       const response = await fetch(`http://localhost:8084/api/clients/delete/${clientId}`, { method: "DELETE" });
       if (!response.ok) throw new Error("Failed to delete client");
-      getClients();
+      fetchClients();
     } catch (error) {
       console.error(error);
     }
@@ -314,7 +325,7 @@ export default function MngClients({ activeNav, onNavClick, onLogout }) {
                   <table className="db-table" style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
                       <tr>
-                        <th>Name</th><th>Email</th><th>Phone number</th><th>Event Type</th><th>Event Date</th><th>Status / Action</th><th>Actions</th>
+                        <th>Name</th><th>Email</th><th>Phone number</th><th>Event Type</th><th>Event Date</th><th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -331,13 +342,17 @@ export default function MngClients({ activeNav, onNavClick, onLogout }) {
                             <td>
                               <div className="db-status-cell">
                                 {client.statuses.map((s, i) => (
-                                  <button key={i} className={`db-status-tag db-status-${s}`} onClick={() => cycleStatus(client.id, s)}>{s}</button>
+                                  <button
+                                    key={i}
+                                    className={`db-status-tag db-status-${s}`}
+                                    onClick={() => markAsDelivered(client.id, s)}
+                                  >
+                                    {s}
+                                  </button>
                                 ))}
                               </div>
                             </td>
-                            <td>
-                              <button className="db-delete-btn" style={{ background: "transparent", border: "none", color: "#ff4d4d", cursor: "pointer", fontSize: "1.1rem" }} onClick={() => handleDelete(client.id)}>🗑️</button>
-                            </td>
+                      
                           </tr>
                         ))
                       )}
