@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { FaInstagram } from "react-icons/fa";
 import QRCode from "qrcode";
 import logoimg from "./assets/transparent white logo.png";
-import "./AlbumManager.css";
+import "./Albummanager.css";
 
-// 1. ADDED GLOBAL DYNAMIC BASE CONSTANTS
+// 1. GLOBAL DYNAMIC BASE CONSTANTS
 const FRONTEND_BASE = window.location.origin;
 const BACKEND_BASE = `http://${window.location.hostname}:8084`;
 
@@ -20,12 +20,13 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   const [albums, setAlbums] = useState([]);
   const [albumId, setAlbumId] = useState("");
   const [albumName, setAlbumName] = useState("");
-  
-  // FIXED: Declared the missing user ID state here
   const [userId, setUserId] = useState("");
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [showQr, setShowQr] = useState(false);
   const [qrImageUrl, setQrImageUrl] = useState("");
+
+  // ── STATE VARIABLES ──
+  const [totalAmount, setTotalAmount] = useState("");
 
   // Load albums and set initial userId on mount
   useEffect(() => {
@@ -37,8 +38,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   async function getAlbums() {
     try {
       const activeUserId = localStorage.getItem("user_id") || "11";
-      
-      // 2. REPLACED WITH DYNAMIC BACKEND_BASE
       const response = await fetch(
         `${BACKEND_BASE}/api/albums/user/${activeUserId}`
       );
@@ -75,7 +74,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
     };
 
     try {
-      // 3. REPLACED WITH DYNAMIC BACKEND_BASE
       const response = await fetch(`${BACKEND_BASE}/api/albums/add`, {
         method: "POST",
         headers: {
@@ -92,7 +90,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
       }
 
       await getAlbums();
-
       setAlbumId("");
       setAlbumName("");
       setUserId("");
@@ -104,8 +101,47 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
     }
   };
 
+  // ── ADDED PUT ACTION TO UPDATE TOTAL AMOUNT VIA API ──
+  const handleAddAmount = async () => {
+    if (!selectedAlbum?.id) {
+      alert("Generate/select QR first");
+      return;
+    }
+
+    if (!totalAmount.trim()) {
+      alert("Enter total amount");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${BACKEND_BASE}/api/qrcode/amount/${selectedAlbum.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            total_amount: Number(totalAmount),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.text();
+        alert("Amount not saved: " + error);
+        return;
+      }
+
+      alert("Amount saved in SQL");
+    } catch (error) {
+      console.error(error);
+      alert("Backend connection failed");
+    }
+  };
+
+  // ── QR GENERATOR ──
   const handleGenerateQr = async (album) => {
-    // 4. REPLACED WITH DYNAMIC FRONTEND_BASE
     const qrLink = `${FRONTEND_BASE}/qrcode/${album.id}`;
 
     try {
@@ -118,7 +154,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
       setQrImageUrl(qrDataUrl);
       setShowQr(true);
 
-      // 5. REPLACED WITH DYNAMIC BACKEND_BASE
       const response = await fetch(`${BACKEND_BASE}/api/qrcode/generate`, {
         method: "POST",
         headers: {
@@ -128,6 +163,7 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
           albumId: album.id,
           albumName: album.name,
           qrLink,
+          total_amount: Number(totalAmount),
         }),
       });
 
@@ -143,7 +179,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
     }
   };
 
-  // 6. REPLACED WITH DYNAMIC FRONTEND_BASE
   const qrLink = selectedAlbum ? `${FRONTEND_BASE}/qrcode/${selectedAlbum.id}` : "";
 
   return (
@@ -225,6 +260,7 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
               onChange={(e) => setAlbumName(e.target.value)}
             />
           </div>
+          
 
           <div className="add-btn-container">
             <button className="btn-add" onClick={handleAdd}>
@@ -253,7 +289,7 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
                   <div className="album-info">
                     <p className="album-name">album name: {album.name}</p>
                     <p className="album-user">user identity: {album.userId}</p>
-                    <p className="album-date">album created date: {album.date}</p>
+                    <p className="album-date">created date: {album.date}</p>
                     <button
                       className="btn-generate-qr"
                       style={{ marginRight: "10px", color: "#00c8e0" }}
@@ -273,6 +309,7 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
             </div>
           </section>
 
+          {/* ── UPDATED QR PANEL ── */}
           {showQr && selectedAlbum && (
             <aside className="qr-panel">
               <div className="qr-image-wrapper">
@@ -290,9 +327,30 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
                 <p className="qr-album-name">
                   <strong>Album name:</strong> {selectedAlbum.name}
                 </p>
-                <p className="qr-bill">
-                  <strong>Total Bill:-</strong>
-                </p>
+                
+                {/* ── TOTAL BILL INPUT BLOCK WITH ₹ SYMBOL & SAVE BUTTON ── */}
+                <div className="qr-field">
+                  <label><strong>Total Bill:</strong></label>
+                  <div className="amount-box" style={{ display: "flex", alignItems: "center", gap: "6px", position: "relative" }}>
+                    <span className="rupee-symbol" style={{ color: "#00c8e0", fontWeight: "bold" }}>₹</span>
+                    <input
+                      type="number"
+                      className="qr-input amount-input"
+                      placeholder="Enter total amount"
+                      value={totalAmount}
+                      onChange={(e) => setTotalAmount(e.target.value)}
+                      style={{ flex: 1 }}
+                    />
+                  </div>
+                  <button 
+                    className="btn-add-amount" 
+                    onClick={handleAddAmount}
+                    style={{ marginTop: "10px", width: "100%" }}
+                  >
+                    Add Amount
+                  </button>
+                </div>
+
               </div>
             </aside>
           )}

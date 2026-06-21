@@ -878,6 +878,49 @@
   gap: 8px;
 }
 
+.qr-field {
+  margin-top: 15px;
+  text-align: left;
+}
+
+.qr-field label {
+  display: block;
+  color: white;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.qr-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #1f1f1f;
+  color: white;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.qr-input:focus {
+  border-color: #00c8e0;
+}
+
+.btn-add-amount {
+  width: 100%;
+  margin-top: 10px;
+  background: #00c8e0;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-add-amount:hover {
+  background: #19e6ff;
+}
+
 .qr-link  { font-size: 11.5px; color: #aaa; line-height: 1.5; }
 .qr-label { font-weight: 600; color: #c0c0c0; }
 .qr-url   { color: #4da6ff; word-break: break-all; }

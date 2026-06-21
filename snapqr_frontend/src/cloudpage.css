@@ -1,0 +1,42 @@
+/* Main content */
+.cloud-main {
+  flex: 1;
+  background: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+/* Center card */
+.cloud-card {
+  width: 500px;
+  max-width: 90%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 50px 30px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 200, 224, 0.08);
+}
+
+/* Emoji */
+.cloud-icon {
+  font-size: 70px;
+  margin-bottom: 20px;
+}
+
+/* Heading */
+.cloud-card h1 {
+  font-size: 32px;
+  color: #00c8e0;
+  margin-bottom: 15px;
+}
+
+/* Description */
+.cloud-card p {
+  font-size: 18px;
+  color: #d0d0d0;
+  line-height: 1.6;
+}

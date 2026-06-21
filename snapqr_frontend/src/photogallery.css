@@ -31,44 +31,55 @@
   color: var(--text-primary);
 }
 
-/* ── Header ───────────────────────────────────────── */
+/* ── Header (UPDATED: Centered Alignment Layout) ──── */
 .pg-header {
-  position: relative;
+  height: 80px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 30px;
+  position: relative;
 }
 
+/* ── Back Button (UPDATED: Absolute Left Positioning) */
 .pg-back-btn {
   position: absolute;
-  left: 20px;
+  left: 24px;
   top: 50%;
   transform: translateY(-50%);
-  padding: 8px 16px;
-  border: none;
-  border-radius: 20px;
-  background: #4da6ff;
+  background: var(--accent);
   color: white;
+  border: none;
+  border-radius: 22px;
+  padding: 9px 20px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
+  transition: background 0.18s, transform 0.12s;
 }
 
+.pg-back-btn:hover {
+  background: #5aafff;
+  transform: translateY(-50%) scale(1.03);
+}
+
+.pg-back-btn:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+/* ── Add Button (UPDATED: High Prominence Sizing) ── */
 .pg-add-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin: 0 auto;
-  padding: 12px 32px;
   background: var(--accent);
-  color: #fff;
+  color: white;
   border: none;
-  border-radius: var(--radius-btn);
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  border-radius: 28px;
+  padding: 14px 32px;
+  font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.18s, transform 0.12s;
 }
@@ -95,12 +106,14 @@
   font-size: 0.85rem;
 }
 
-
-.pg-thumb-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* ── Customer Mode Header Title ───────────────────── */
+.pg-customer-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
+
 /* ── Divider ──────────────────────────────────────── */
 .pg-divider {
   height: 1px;
@@ -116,6 +129,14 @@
   padding: 0 28px 48px;
   max-width: 1100px;
   margin: 0 auto;
+}
+
+.pg-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 60px 0;
+  font-size: 0.95rem;
 }
 
 /* ── Album Card ───────────────────────────────────── */
@@ -312,17 +333,26 @@
   letter-spacing: 0.05em;
 }
 
-.pg-back-btn:hover {
-  background: #5aafff;
-  transform: translateY(-50%) scale(1.03);
-}
-
-.pg-back-btn:active {
-  transform: translateY(-50%) scale(0.98);
-}
-
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width: 480px) {
+  .pg-header {
+    height: auto;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .pg-back-btn {
+    position: static;
+    transform: none;
+    width: 100%;
+    text-align: center;
+  }
+
+  .pg-back-btn:hover, .pg-back-btn:active {
+    transform: none;
+  }
+
   .pg-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -332,5 +362,7 @@
   .pg-add-btn {
     padding: 10px 24px;
     font-size: 0.9rem;
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -5,6 +5,7 @@ import SnapQRHomepage from "./home";
 import AlbumManager from "./Albummanager";
 import MngClients from "./addclients";
 import PhotoGallery from "./photogallary";
+import ServiceUnavailable from "./cloudpage";
 
 export default function App() {
   const [page, setPage] = useState("signup");
@@ -20,7 +21,9 @@ export default function App() {
     if (lowerLabel === "home") setPage("home");
     if (lowerLabel === "manage clients" || lowerLabel === "clients") setPage("clients");
     if (lowerLabel === "qr sharing" || lowerLabel === "qr") setPage("qr");
-    if (lowerLabel === "cloud storage") setPage("qr");
+    
+    // 1. UPDATED: Direct cloud storage mapping routing assignment
+    if (lowerLabel === "cloud storage") setPage("cloud");
   };
 
   const handleLogout = () => {
@@ -86,6 +89,15 @@ export default function App() {
           onLogout={handleLogout}
         />
       )}
+
+      {/* 2. REPOSITIONED/CLEANED UP CLOUD INTERFACE VIEWPORT MAPPER */}
+      {page === "cloud" && (
+  <ServiceUnavailable
+    activeNav="Cloud storage"
+    onNavigate={(label) => handleNavigate(label)}
+  />
+)}
+
     </>
   );
 }
