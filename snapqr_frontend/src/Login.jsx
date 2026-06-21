@@ -28,13 +28,13 @@ export default function Login({ onSwitchToSignup, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // 🔄 FIXED: Dynamic network binding matching your current browser location profile
-  const backendBaseUrl = `http://${window.location.hostname}:8084`;
+  // 1. ADDED/UPDATED DYNAMIC BASE CONSTANT AT COMPONENT SCOPE LEVEL
+  const BACKEND_BASE = `http://${window.location.hostname}:8084`;
 
   const handleLogin = async () => {
     try {
-      // 🔗 FIXED: Uses dynamic host context template literal mapping to resolve requests over Wi-Fi
-      const response = await fetch(`${backendBaseUrl}/api/users/login`, {
+      // 2. REPLACED HARDCODED ROUTE EXPRESSIONS WITH THE DYNAMIC BASE STRINGS
+      const response = await fetch(`${BACKEND_BASE}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export default function Login({ onSwitchToSignup, onLoginSuccess }) {
       }
     } catch (error) {
       console.error("Login Error:", error);
-      alert(`Login Failed. Unable to establish connection to: ${backendBaseUrl}`);
+      alert(`Login Failed. Unable to establish connection to: ${BACKEND_BASE}`);
     }
   };
 

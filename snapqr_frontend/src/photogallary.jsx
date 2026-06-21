@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import "./photogallery.css";
+
+// GLOBAL DYNAMIC BACKEND BASE CONSTANT
+const BACKEND_BASE = `http://${window.location.hostname}:8084`;
  
-export default function PhotoGallery({ album, onBack }) {
+// 1. UPDATED COMPONENT SIGNATURE TO SUPPORT isCustomerView
+export default function PhotoGallery({ album, onBack, isCustomerView = false }) {
   const [photos, setPhotos] = useState([]);
   const fileInputRef = useRef(null);
 
@@ -25,7 +29,7 @@ export default function PhotoGallery({ album, onBack }) {
 
       try {
         const response = await fetch(
-          `http://localhost:8084/api/photos/upload/${album.id}`,
+          `${BACKEND_BASE}/api/photos/upload/${album.id}`,
           {
             method: "POST",
             body: formData,
@@ -62,7 +66,7 @@ export default function PhotoGallery({ album, onBack }) {
 
     try {
       const response = await fetch(
-        `http://localhost:8084/api/photos/album/${album.id}`
+        `${BACKEND_BASE}/api/photos/album/${album.id}`
       );
 
       if (!response.ok) {
@@ -101,15 +105,24 @@ export default function PhotoGallery({ album, onBack }) {
         style={{ display: "none" }}
         onChange={handleFileSelect}
       />
-      {/* Header */}
+      
+      {/* 2. DYNAMIC HEADER SECTION BASED ON VIEW MODE */}
       <header className="pg-header">
-        <button className="pg-back-btn" onClick={onBack}>
-          &larr; Back to Albums
-        </button>
-        <button className="pg-add-btn" onClick={handleAddPhotosClick}>
-          <span className="pg-add-icon">＋</span>
-          Add Photos to {album?.name}
-        </button>
+        {!isCustomerView && (
+          <>
+            <button className="pg-back-btn" onClick={onBack}>
+              &larr; Back to Albums
+            </button>
+            <button className="pg-add-btn" onClick={handleAddPhotosClick}>
+              <span className="pg-add-icon">＋</span>
+              Add Photos to {album?.name}
+            </button>
+          </>
+        )}
+
+        {isCustomerView && (
+          <h2 className="pg-customer-title">📸 Your Photo Gallery</h2>
+        )}
       </header>
 
       <div className="pg-divider" />
@@ -131,18 +144,32 @@ export default function PhotoGallery({ album, onBack }) {
 
               <div className="pg-card-body">
                 <p className="pg-album-name">{photo.name}</p>
+                
+                {/* 3. DYNAMIC ACTIONS SECTION WITH DOWNLOAD LINKS */}
                 <div className="pg-actions">
-                  <button
+                  <a
+                    href={photo.url}
+                    download
+                    target="_blank"
+                    rel="noreferrer"
                     className="pg-link-btn"
-                    style={{ color: "#ff4d4d" }}
-                    onClick={() => {
-                      if (window.confirm("Remove this photo from the gallery?")) {
-                        setPhotos((prev) => prev.filter((p) => p.id !== photo.id));
-                      }
-                    }}
                   >
-                    delete
-                  </button>
+                    download
+                  </a>
+
+                  {!isCustomerView && (
+                    <button
+                      className="pg-link-btn"
+                      style={{ color: "#ff4d4d" }}
+                      onClick={() => {
+                        if (window.confirm("Remove this photo from the gallery?")) {
+                          setPhotos((prev) => prev.filter((p) => p.id !== photo.id));
+                        }
+                      }}
+                    >
+                      delete
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

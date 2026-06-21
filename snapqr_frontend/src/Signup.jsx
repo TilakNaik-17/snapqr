@@ -53,8 +53,8 @@ export default function Signup({ onSwitchToLogin }) {
   
   const [errors, setErrors] = useState({});
 
-  // 🔄 FIXED: Dynamic network binding matching your current hostname address profile
-  const backendBaseUrl = `http://${window.location.hostname}:8084`;
+  // 1. UPDATED TO A STANDARDIZED DYNAMIC CONSTANT NAME
+  const BACKEND_BASE = `http://${window.location.hostname}:8084`;
 
   // HANDLE INPUT
   const handleChange = (e) => {
@@ -106,8 +106,8 @@ export default function Signup({ onSwitchToLogin }) {
     }
 
     try {
-      // 🔗 FIXED: Replaced localhost with dynamic template literal string variables
-      const response = await fetch(`${backendBaseUrl}/api/users/signup`, {
+      // 2. REPLACED EXPLICIT IP ENDPOINT ADDRESS WITH DYNAMIC HOST STRINGS
+      const response = await fetch(`${BACKEND_BASE}/api/users/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -127,7 +127,7 @@ export default function Signup({ onSwitchToLogin }) {
       }
     } catch (error) {
       console.error("Frontend Catch Block:", error);
-      alert(`Network Error or Parsing Error: Signup Failed! Unable to contact backend at: ${backendBaseUrl}`);
+      alert(`Network Error or Parsing Error: Signup Failed! Unable to contact backend at: ${BACKEND_BASE}`);
     }
   };
 

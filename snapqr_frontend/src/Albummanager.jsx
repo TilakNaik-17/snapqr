@@ -4,6 +4,10 @@ import QRCode from "qrcode";
 import logoimg from "./assets/transparent white logo.png";
 import "./AlbumManager.css";
 
+// 1. ADDED GLOBAL DYNAMIC BASE CONSTANTS
+const FRONTEND_BASE = window.location.origin;
+const BACKEND_BASE = `http://${window.location.hostname}:8084`;
+
 const navItems = [
   { icon: "⊞", label: "Home" },
   { icon: "◎", label: "Manage Clients" },
@@ -23,10 +27,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   const [showQr, setShowQr] = useState(false);
   const [qrImageUrl, setQrImageUrl] = useState("");
 
-  // Base URLs configuration dynamically fetched based on current hostname
-  const baseUrl = window.location.origin;
-  const backendBaseUrl = `http://${window.location.hostname}:8084`;
-
   // Load albums and set initial userId on mount
   useEffect(() => {
     getAlbums();
@@ -37,9 +37,10 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   async function getAlbums() {
     try {
       const activeUserId = localStorage.getItem("user_id") || "11";
-      // CHANGED: Replaced hardcoded IP with dynamic backendBaseUrl
+      
+      // 2. REPLACED WITH DYNAMIC BACKEND_BASE
       const response = await fetch(
-        `${backendBaseUrl}/api/albums/user/${activeUserId}`
+        `${BACKEND_BASE}/api/albums/user/${activeUserId}`
       );
       if (!response.ok) throw new Error("Failed to fetch albums");
 
@@ -74,8 +75,8 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
     };
 
     try {
-      // CHANGED: Replaced hardcoded IP with dynamic backendBaseUrl
-      const response = await fetch(`${backendBaseUrl}/api/albums/add`, {
+      // 3. REPLACED WITH DYNAMIC BACKEND_BASE
+      const response = await fetch(`${BACKEND_BASE}/api/albums/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,7 +105,8 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   };
 
   const handleGenerateQr = async (album) => {
-    const qrLink = `${baseUrl}/qrcode/${album.id}`;
+    // 4. REPLACED WITH DYNAMIC FRONTEND_BASE
+    const qrLink = `${FRONTEND_BASE}/qrcode/${album.id}`;
 
     try {
       const qrDataUrl = await QRCode.toDataURL(qrLink, {
@@ -116,8 +118,8 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
       setQrImageUrl(qrDataUrl);
       setShowQr(true);
 
-      // CHANGED: Replaced hardcoded IP with dynamic backendBaseUrl
-      const response = await fetch(`${backendBaseUrl}/api/qrcode/generate`, {
+      // 5. REPLACED WITH DYNAMIC BACKEND_BASE
+      const response = await fetch(`${BACKEND_BASE}/api/qrcode/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +143,8 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
     }
   };
 
-  const qrLink = selectedAlbum ? `${baseUrl}/qrcode/${selectedAlbum.id}` : "";
+  // 6. REPLACED WITH DYNAMIC FRONTEND_BASE
+  const qrLink = selectedAlbum ? `${FRONTEND_BASE}/qrcode/${selectedAlbum.id}` : "";
 
   return (
     <div className="snapqr-root">
