@@ -28,9 +28,13 @@ export default function Login({ onSwitchToSignup, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // 🔄 FIXED: Dynamic network binding matching your current browser location profile
+  const backendBaseUrl = `http://${window.location.hostname}:8084`;
+
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://localhost:8084/api/users/login", {
+      // 🔗 FIXED: Uses dynamic host context template literal mapping to resolve requests over Wi-Fi
+      const response = await fetch(`${backendBaseUrl}/api/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -42,14 +46,12 @@ export default function Login({ onSwitchToSignup, onLoginSuccess }) {
       });
 
       if (response.ok) {
-        // CORRECTION: Parse response as JSON to read the fields returned by Spring Boot
         const userData = await response.json();
         console.log("Logged in user details:", userData);
 
-        // CORRECTION: Extract id dynamically (fallback to your main test user 11 if missing)
         const activeUserId = userData.user_id || userData.id || "11";
 
-        // CRITICAL FIX: Save the ID to localStorage so the client manager dashboard can see it
+        // Save the valid active identity down into the global device state storage context
         localStorage.setItem("user_id", String(activeUserId));
 
         alert("Login Successful");
@@ -63,7 +65,7 @@ export default function Login({ onSwitchToSignup, onLoginSuccess }) {
       }
     } catch (error) {
       console.error("Login Error:", error);
-      alert("Login Failed. Make sure your Spring Boot backend is running.");
+      alert(`Login Failed. Unable to establish connection to: ${backendBaseUrl}`);
     }
   };
 

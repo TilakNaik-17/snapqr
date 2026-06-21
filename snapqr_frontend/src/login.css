@@ -350,6 +350,8 @@
 /* ─── RIGHT — IMAGE PANEL ────────────────────── */
 .li-image-panel {
   position: relative;
+  display: block;
+  min-height: 100%;
   overflow: hidden;
   background: #0c0e10;
 }

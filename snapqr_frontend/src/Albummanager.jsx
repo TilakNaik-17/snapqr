@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaInstagram } from "react-icons/fa";
+import QRCode from "qrcode";
 import logoimg from "./assets/transparent white logo.png";
 import "./AlbumManager.css";
 
@@ -17,10 +18,14 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   const [albumName, setAlbumName] = useState("");
   
   // FIXED: Declared the missing user ID state here
-  const [userId, setUserId] = useState(""); 
-  const [createdDate, setCreatedDate] = useState("");
+  const [userId, setUserId] = useState("");
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [showQr, setShowQr] = useState(false);
+  const [qrImageUrl, setQrImageUrl] = useState("");
+
+  // Base URLs configuration dynamically fetched based on current hostname
+  const baseUrl = window.location.origin;
+  const backendBaseUrl = `http://${window.location.hostname}:8084`;
 
   // Load albums and set initial userId on mount
   useEffect(() => {
@@ -32,8 +37,9 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   async function getAlbums() {
     try {
       const activeUserId = localStorage.getItem("user_id") || "11";
+      // CHANGED: Replaced hardcoded IP with dynamic backendBaseUrl
       const response = await fetch(
-        `http://localhost:8084/api/albums/user/${activeUserId}`
+        `${backendBaseUrl}/api/albums/user/${activeUserId}`
       );
       if (!response.ok) throw new Error("Failed to fetch albums");
 
@@ -56,19 +62,20 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   };
 
   const handleAdd = async () => {
-    if (!albumName.trim() || !createdDate.trim() || !userId.trim()) {
+    if (!albumId.trim() || !albumName.trim() || !userId.trim()) {
       alert("Fill all fields");
       return;
     }
 
     const albumData = {
+      albumId: Number(albumId),
       albumName: albumName.trim(),
-      createdDate: createdDate.trim(),
       userId: Number(userId),
     };
 
     try {
-      const response = await fetch("http://localhost:8084/api/albums/add", {
+      // CHANGED: Replaced hardcoded IP with dynamic backendBaseUrl
+      const response = await fetch(`${backendBaseUrl}/api/albums/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +86,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
       const result = await response.text();
 
       if (!response.ok) {
-        console.log("Backend error:", result);
         alert("Album not saved: " + result);
         return;
       }
@@ -89,7 +95,6 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
       setAlbumId("");
       setAlbumName("");
       setUserId("");
-      setCreatedDate("");
 
       alert("Album stored in database");
     } catch (error) {
@@ -99,32 +104,44 @@ export default function AlbumManager({ onNavigate, onOpenGallery }) {
   };
 
   const handleGenerateQr = async (album) => {
-    const qrLink = `http://10.104.213.18:5173/qrcode/${album.id}`;
+    const qrLink = `${baseUrl}/qrcode/${album.id}`;
 
     try {
-      const response = await fetch("http://localhost:8084/api/qrcode/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ albumId: album.id, albumName: album.name, qrLink }),
+      const qrDataUrl = await QRCode.toDataURL(qrLink, {
+        width: 220,
+        margin: 2,
       });
-      if (!response.ok) throw new Error("QR not saved");
-      const savedQr = await response.json();
-      console.log("QR saved:", savedQr);
+
+      setSelectedAlbum(album);
+      setQrImageUrl(qrDataUrl);
+      setShowQr(true);
+
+      // CHANGED: Replaced hardcoded IP with dynamic backendBaseUrl
+      const response = await fetch(`${backendBaseUrl}/api/qrcode/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          albumId: album.id,
+          albumName: album.name,
+          qrLink,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log("QR save error:", errorText);
+        alert("QR saved in UI, but not saved in database");
+        return;
+      }
     } catch (error) {
       console.error(error);
-      alert("QR code not saved in database");
+      alert("QR generation failed");
     }
-
-    setSelectedAlbum(album);
-    setShowQr(true);
   };
 
-const qrLink = selectedAlbum
-  ? `http://10.104.213.18:5173/qrcode/${selectedAlbum.id}`
-  : "";
-const qrImageUrl = selectedAlbum
-    ? `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrLink)}`
-    : "";
+  const qrLink = selectedAlbum ? `${baseUrl}/qrcode/${selectedAlbum.id}` : "";
 
   return (
     <div className="snapqr-root">
@@ -166,7 +183,6 @@ const qrImageUrl = selectedAlbum
 
       {/* ── Main content ── */}
       <div className="app-wrapper">
-
         {/* Header */}
         <header className="app-header">
           <div className="header-fields">
@@ -181,15 +197,11 @@ const qrImageUrl = selectedAlbum
               />
             </div>
           </div>
-
-          
         </header>
-
-  
 
         {/* Form rows */}
         <section className="form-section">
-  <div className="form-row">
+          <div className="form-row">
             <label className="form-label">User ID:</label>
             <input
               className="form-input"
@@ -211,18 +223,10 @@ const qrImageUrl = selectedAlbum
             />
           </div>
 
-
-
-          <div className="form-row">
-            <label className="form-label">Created date:</label>
-            <input
-              className="form-input"
-              type="text"
-              placeholder="dd/mm/yyyy"
-              value={createdDate}
-              onChange={(e) => setCreatedDate(e.target.value)}
-            />
-            <button className="btn-add" onClick={handleAdd}>Add</button>
+          <div className="add-btn-container">
+            <button className="btn-add" onClick={handleAdd}>
+               Add
+            </button>
           </div>
         </section>
 
@@ -245,7 +249,6 @@ const qrImageUrl = selectedAlbum
                   </div>
                   <div className="album-info">
                     <p className="album-name">album name: {album.name}</p>
-                    {/* Optional UI display line for user ID inside your card list */}
                     <p className="album-user">user identity: {album.userId}</p>
                     <p className="album-date">album created date: {album.date}</p>
                     <button

@@ -45,7 +45,7 @@ export default function Signup({ onSwitchToLogin }) {
 
   // STATE
   const [formData, setFormData] = useState({
-    user_id: "", // Matches the name attribute and backend entity field precisely
+    user_id: "", 
     fullName: "",
     email: "",
     password: "",
@@ -53,13 +53,15 @@ export default function Signup({ onSwitchToLogin }) {
   
   const [errors, setErrors] = useState({});
 
+  // 🔄 FIXED: Dynamic network binding matching your current hostname address profile
+  const backendBaseUrl = `http://${window.location.hostname}:8084`;
+
   // HANDLE INPUT
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
-    // Clear field-specific error as user types
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
@@ -93,7 +95,7 @@ export default function Signup({ onSwitchToLogin }) {
     return formErrors;
   };
 
-  // FIXED: UPDATED HANDLE SIGNUP WITH PLAIN TEXT ERROR EXRACTION
+  // HANDLE SIGNUP
   const handleSignup = async () => {
     const formErrors = validateForm();
     
@@ -104,31 +106,28 @@ export default function Signup({ onSwitchToLogin }) {
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:8084/api/users/signup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      // 🔗 FIXED: Replaced localhost with dynamic template literal string variables
+      const response = await fetch(`${backendBaseUrl}/api/users/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-      // If response is successful (status 200)
       if (response.ok) {
         const data = await response.json();
         console.log(data);
         alert("Signup Successful!");
         setErrors({});
+        if (onSwitchToLogin) onSwitchToLogin(); // Guide them back to login on success
       } else {
-        // FIXED: Extract string tokens safely instead of breaking on JSON parsing
         const textError = await response.text();
         alert("Signup Failed: " + textError);
       }
     } catch (error) {
       console.error("Frontend Catch Block:", error);
-      alert("Network Error or Parsing Error: Signup Failed!");
+      alert(`Network Error or Parsing Error: Signup Failed! Unable to contact backend at: ${backendBaseUrl}`);
     }
   };
 
@@ -154,14 +153,14 @@ export default function Signup({ onSwitchToLogin }) {
           {/* INPUT FIELDS */}
           <div className="su-fields">
 
-            {/* USER ID (FIXED INPUT ATTRIBUTE NAME CLASH) */}
+            {/* USER ID */}
             <div className={`su-field ${errors.user_id ? "db-input-error" : ""}`}>
               <span className="su-field-icon">
                 <IconUser />
               </span>
               <input
                 type="text"
-                name="user_id" // Fixed from "user id" to match state management keys
+                name="user_id"
                 placeholder="User ID"
                 autoComplete="username"
                 value={formData.user_id}

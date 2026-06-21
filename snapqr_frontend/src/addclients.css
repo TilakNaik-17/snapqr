@@ -276,8 +276,8 @@
   font-family: monospace;
 }
 
-/* Main Display Panels Container */
-.db-main {
+
+/*.db-main {
   flex: 1;
   min-width: 0;
   background-color: #2a2a2a;
@@ -287,15 +287,30 @@
   min-height: 450px;
   box-sizing: border-box;
 }
-
-/* ==========================================================================
-   View 1: Form Component Styles ("Add clients")
-   ========================================================================== */
-.db-form-panel {
-  max-width: 500px;
-  margin: 0 auto;
-  position: relative;
+*/
+.db-form-panel1{
+  flex: 0 0 700px;   /* fixed width */
+  max-width: 700px;
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  border-radius: 16px;
+  padding: 40px;
+  min-height: fit-content;
+  box-sizing: border-box;
 }
+
+.db-status-panel2{
+
+  flex: 1;
+  min-width: fit-content;
+  background-color: #2a2a2a;
+  border: 1px solid #333333;
+  border-radius: 16px;
+  padding: 30px;
+  min-height: 450px;
+  box-sizing: border-box;
+}
+
 
 .inputs {
   display: flex;

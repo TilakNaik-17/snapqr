@@ -18,6 +18,20 @@
   --su-transition:    0.22s ease;
 }
 
+
+
+#root {
+    width: 1600px;
+    max-width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    border-inline: 1px solid var(--border);
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
 *,
 *::before,
 *::after {
@@ -274,6 +288,8 @@
 /* ─── RIGHT — IMAGE PANEL ────────────────────── */
 .su-image-panel {
   position: relative;
+  display: block;
+  min-height: 100%;
   overflow: hidden;
   background: #0c0e10;
 }

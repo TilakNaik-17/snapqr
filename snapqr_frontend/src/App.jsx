@@ -11,9 +11,8 @@ export default function App() {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
 
   const path = window.location.pathname;
-  const albumIdFromPath = path.startsWith("/qrcode/")
-    ? path.split("/")[2]
-    : null;
+  const albumIdFromPath = path.match(/^\/qrcode\/(\d+)\/?$/)?.[1] ?? null;
+  const albumId = albumIdFromPath ? Number(albumIdFromPath) : null;
 
   // Handles navigation sidebar clicks from sub-components
   const handleNavigate = (label) => {
@@ -30,11 +29,12 @@ export default function App() {
     setPage("login");
   };
 
-  if (albumIdFromPath) {
+  if (albumId !== null && !Number.isNaN(albumId)) {
     return (
       <PhotoGallery
         album={{ id: Number(albumIdFromPath) }}
         onBack={() => window.history.back()}
+        isCustomerView={true}
       />
     );
   }
@@ -72,7 +72,11 @@ export default function App() {
       )}
 
       {page === "gallery" && (
-        <PhotoGallery album={selectedAlbum} onBack={() => setPage("qr")} />
+        <PhotoGallery
+          album={selectedAlbum}
+          onBack={() => setPage("qr")}
+          isCustomerView={false}
+        />
       )}
 
       {page === "clients" && (

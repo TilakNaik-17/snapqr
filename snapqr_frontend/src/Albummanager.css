@@ -657,6 +657,23 @@
   transform: scale(1.03);
 }
 
+
+.add-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.btn-add {
+    width: 180px;
+    height: 45px;
+    padding: 0;
+}
+
+.btn-add {
+    width: 120px;
+    flex: none;
+}
 /* ─── Form Section ───────────────────────────────────────────── */
 .form-section {
   display: flex;
@@ -740,18 +757,16 @@
 }
 
 .albums-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 cards per row */
+    gap: 10px; /* space between cards */
 }
 
 /* ─── Album card ─────────────────────────────────────────────── */
 .album-card {
-  background-color: #242426;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid transparent;
-  transition: transform 0.2s, box-shadow 0.2s;
+    width: 180px;      /* or 160px if you want even smaller */
+    padding: 10px;
+    font-size: 13px;
 }
 
 .album-card:hover {
